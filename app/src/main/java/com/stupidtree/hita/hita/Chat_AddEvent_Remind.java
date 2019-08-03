@@ -1,48 +1,33 @@
-package com.stupidtree.hita.ChatSec;
-
-import android.content.Intent;
+package com.stupidtree.hita.hita;
 
 import com.google.gson.JsonObject;
 
 import org.ansj.domain.Nature;
 import org.ansj.domain.Term;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
-import static com.stupidtree.hita.ChatSec.TextTools.*;
+import static com.stupidtree.hita.hita.TextTools.BEFORE;
+import static com.stupidtree.hita.hita.TextTools.NEXT;
+import static com.stupidtree.hita.hita.TextTools.THIS;
+import static com.stupidtree.hita.hita.TextTools.TT_BEFORE;
+import static com.stupidtree.hita.hita.TextTools.TT_NEXT;
+import static com.stupidtree.hita.hita.TextTools.T_BEFORE;
+import static com.stupidtree.hita.hita.TextTools.T_NEXT;
 import static org.nlpcn.commons.lang.util.WordAlert.isNumber;
 
-public class Chat_SearchEvent {
+public class Chat_AddEvent_Remind {
     TextTools textTools;
-    Chat_SearchEvent(TextTools tt){
+    Chat_AddEvent_Remind(TextTools tt){
         textTools = tt;
     }
-    private static final int SC_WW = 1;
-    private static final int SC_NO = 2;
+    private static final int AE_WW = 1;
 
-    public JsonObject Process(List<Term> x, int TAG) {
+    public JsonObject Process(List<Term> x) {
         reUnion(x);
         System.out.println("已完成重组："+x);
         JsonObject result = new JsonObject();
-        switch (Judge(x)) {
-            case SC_WW:
-                System.out.println("已识别为WW事件查询");
-                JsonObject object = processSEWW(x);
-                object.addProperty("tag",TAG);
-                return object;
-            case SC_NO:
-                System.out.println("已识别为NO事件查询");
-                JsonObject object1 = new JsonObject();
-                object1.addProperty("function","search_event_nextone");
-                object1.addProperty("tag",TAG);
-                return object1;
-
-        }
-        result.addProperty("message_show","你这个查询信息不太对啊");
-        return result;
+        return processAEWW(x);
     }
 
     public void reUnion(List<Term> x) {
@@ -99,22 +84,7 @@ public class Chat_SearchEvent {
         }
     }
 
-    private int Judge(List<Term> x) {
-        if(textTools.getCount(x,"t_nextone",false)>=1){
-            return SC_NO;
-        }
-        if ((textTools.getCount(x, "t_w", false) + textTools.getCount(x, "t_dow", false) >= 1)
-                && textTools.getCount(x, textTools.words_to, true) >= 1
-                || textTools.getCount(x, "t_w", false) + textTools.getCount(x, "t_dow", false) + textTools.getCount(x, "t*w", false)+textTools.getCount(x,"t_pr",false) >= 1
-                || (textTools.getCount(x, "t_h", false) + textTools.getCount(x, "t_m", false)  >= 1)&& textTools.getCount(x, textTools.words_to, true) >= 1 )
-         {
-            return SC_WW;
-        }
-
-        return 0;
-    }
-
-    private JsonObject processSEWW(List<Term> x) {
+    private JsonObject processAEWW(List<Term> x) {
         String fromW_Txt;
         String toW_Txt;
         String fromDOW_Txt;
@@ -135,6 +105,7 @@ public class Chat_SearchEvent {
         int fromM_Num = 0;
         int toM_Num = 0;
         int num_Num = 0;
+        String eventNameTxt;
 
         String[] temp1 = {"t_w"};
         String[] temp2 = {"t_dow"};
@@ -142,6 +113,9 @@ public class Chat_SearchEvent {
         String[] temp4 = {"t_h"};
         String[] temp5 = {"t_m"};
         String[] temp6 = {"t_pr"};
+        String[] temp7 = {"t","add_remind"};
+
+        eventNameTxt = textTools.getStringAfterTag(x,temp7);
         num_Txt = textTools.getStringWithTag(x,"t_num",1);
         num_Num = parseNumText(num_Txt);
         fromW_Txt = textTools.getStringBetweenTag(x, temp1, temp3, false, 0, 1, 1);
@@ -220,26 +194,26 @@ public class Chat_SearchEvent {
                         break;
                 }
             }
-                if (toPr_Txt != null && toH_Txt == null) {
-                    switch (parsePeriodText(toPr_Txt)) {
-                        case 1:
-                            toH_Num = 11;
-                            toM_Num = 59;
-                            break;
-                        case 2:
-                            toH_Num = 12;
-                            toM_Num = 59;
-                            break;
-                        case 3:
-                            toH_Num = 17;
-                            toM_Num = 59;
-                            break;
-                        case 4:
-                            toH_Num = 23;
-                            toM_Num = 59;
-                            break;
-                    }
+            if (toPr_Txt != null && toH_Txt == null) {
+                switch (parsePeriodText(toPr_Txt)) {
+                    case 1:
+                        toH_Num = 11;
+                        toM_Num = 59;
+                        break;
+                    case 2:
+                        toH_Num = 12;
+                        toM_Num = 59;
+                        break;
+                    case 3:
+                        toH_Num = 17;
+                        toM_Num = 59;
+                        break;
+                    case 4:
+                        toH_Num = 23;
+                        toM_Num = 59;
+                        break;
                 }
+            }
 
         }
         if (fromPr_Txt != null && fromH_Num <= 12&&fromH_Txt!=null) {
@@ -248,7 +222,7 @@ public class Chat_SearchEvent {
         if (toPr_Txt != null && toH_Num <= 12&&toH_Txt!=null) {
             if (parsePeriodText(toPr_Txt) >= 3) toH_Num += 12;
         }
-       JsonObject OBJ = new JsonObject();
+        JsonObject OBJ = new JsonObject();
         OBJ.addProperty("fW",fromW_Num);
         OBJ.addProperty("tW",toW_Num);
         OBJ.addProperty("fDOW",fromDOW_Num);
@@ -258,8 +232,10 @@ public class Chat_SearchEvent {
         OBJ.addProperty("tH",toH_Num);
         OBJ.addProperty("tM",toM_Num);
         OBJ.addProperty("num",num_Num);
-        OBJ.addProperty("function","search_event_ww");
+        OBJ.addProperty("name",eventNameTxt);
+        OBJ.addProperty("function","add_event_remind");
         return OBJ;
+
     }
 
     private int parseWeekText(String text) {

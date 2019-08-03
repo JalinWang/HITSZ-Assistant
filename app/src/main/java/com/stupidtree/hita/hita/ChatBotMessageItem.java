@@ -1,7 +1,6 @@
-package com.stupidtree.hita.ChatSec;
+package com.stupidtree.hita.hita;
 
 
-import com.google.gson.JsonObject;
 import com.stupidtree.hita.core.timetable.EventItem;
 import com.stupidtree.hita.core.timetable.Task;
 

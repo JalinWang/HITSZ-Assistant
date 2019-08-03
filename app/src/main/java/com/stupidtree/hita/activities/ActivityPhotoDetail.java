@@ -12,13 +12,14 @@ import com.stupidtree.hita.R;
 
 
 
-public class ActivityNoteDetail extends BaseActivity {
+public class ActivityPhotoDetail extends BaseActivity {
 
     String imagePath;
     PhotoView photoView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setWindowParams(true,false,true);
         setContentView(R.layout.activity_note_detail);
         imagePath = getIntent().getStringExtra("imagePath");
         photoView = findViewById(R.id.photoview);

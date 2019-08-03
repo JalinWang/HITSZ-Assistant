@@ -1,11 +1,10 @@
-package com.stupidtree.hita.ChatSec;
+package com.stupidtree.hita.hita;
 
 import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
-import com.stupidtree.hita.activities.ActivityMain;
 
 import org.ansj.domain.Result;
 import org.ansj.domain.Term;
@@ -13,7 +12,6 @@ import org.ansj.splitWord.analysis.ToAnalysis;
 import org.nlpcn.commons.lang.tire.domain.Forest;
 import org.nlpcn.commons.lang.tire.library.Library;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 

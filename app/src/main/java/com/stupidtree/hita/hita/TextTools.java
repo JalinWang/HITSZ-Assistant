@@ -1,4 +1,4 @@
-package com.stupidtree.hita.ChatSec;
+package com.stupidtree.hita.hita;
 
 import org.ansj.domain.Nature;
 import org.ansj.domain.Term;
